@@ -53,9 +53,32 @@ const coroutine = (gen) => {
     return handle(gen().next());
 }
 */
-
+/*
 const co = require('co');
 //const quoteFetcher = coroutine(createQuoteFetcher);
 const quoteFetcher = co(createQuoteFetcher);
 quoteFetcher
     .then(quote => console.log(quote))
+*/
+
+
+
+
+function* createFetchGithubUser(url) {
+    const response = yield fetch(url);
+    const body = yield response.json();
+    return body;
+}
+
+/*
+
+const fetchGithubUser = createFetchGithubUser('https://api.github.com/users/yurikilian');
+const fetchPromise = fetchGithubUser.next().value;
+const toJsonPromise = fetchPromise.then(response => fetchGithubUser.next(response).value);
+const bodyPromise = toJsonPromise.then(response => fetchGithubUser.next(response).value)
+bodyPromise.then(response => console.log(response.name))
+*/
+
+const co = require('co');
+const fetchGithubUser = co(createFetchGithubUser, 'https://api.github.com/users/yurikilian');
+fetchGithubUser.then(response => console.log(response.name))
